@@ -7,6 +7,7 @@ from flet.types import RotateValue, ScaleValue, OffsetValue, AnimationValue, Mar
 import pygame.mixer as mixer
 import time
 from pathlib import Path
+from ..io.task_card_io import TaskCardIO
 
 
 SOUND_PATH = str(Path(__file__).absolute().parent.parent) + '/static/tishi.mp3'
@@ -15,7 +16,7 @@ SOUND_PATH = str(Path(__file__).absolute().parent.parent) + '/static/tishi.mp3'
 
 
 
-class TaskCard(ft.Card,threading.Thread):
+class TaskCard(ft.Card,threading.Thread,TaskCardIO):
     def __init__(self,task_name:str,time: str ,page: ft.Page,content: Optional[Control] = None, ref: Optional[Ref] = None, width: OptionalNumber = None,
                  height: OptionalNumber = None, left: OptionalNumber = None, top: OptionalNumber = None,
                  right: OptionalNumber = None, bottom: OptionalNumber = None, expand: Union[None, bool, int] = None,
@@ -37,6 +38,7 @@ class TaskCard(ft.Card,threading.Thread):
             time_ = 30
 
         self.name = task_name
+        self.time = time
         self.remaining_time = time_
         self.width = 200
         self.page = page
@@ -48,6 +50,7 @@ class TaskCard(ft.Card,threading.Thread):
             },
 
                                        )
+
 
 
     def update_content(self):
@@ -67,4 +70,9 @@ class TaskCard(ft.Card,threading.Thread):
         mixer.music.load(SOUND_PATH)
         mixer.music.play()
 
+    def toDict(self) -> dict:
+        return dict(
+            task_name = self.name,
+            time = self.time,
+        )
 
