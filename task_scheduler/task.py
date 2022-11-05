@@ -12,6 +12,9 @@ def read_starred():
     if os.path.isdir(cache_path):
         jsonfiles = set([f for f in listdir(cache_path) if f.endswith('.json')])
         return jsonfiles
+    else:
+        os.mkdir(cache_path)
+        return []
 
 class Todo:
     def __init__(self, todo_name:str, time: str):
@@ -77,6 +80,7 @@ class Task(IO):
             self.STARRED.add(title)
         else:
             print('already starred')
+
 
     def to_json(self, file_path:str = None):
         if file_path is None:
