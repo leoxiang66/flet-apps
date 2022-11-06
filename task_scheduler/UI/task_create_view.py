@@ -1,12 +1,13 @@
+
 from typing import List
-from .task_card_view import TaskCard
+
 import flet as ft
 from .dialog import Dialogue
-from flet import colors
+from ..task import Task,Todo,current_view_update
 
 
 
-class Todo:
+class TodoView:
     alert_dialogue = Dialogue('Please enter task time')
 
     def __init__(self, id, parent_controls: List, page:ft.Page, parent):
@@ -22,11 +23,21 @@ class Todo:
                         ft.dropdown.Option('5 Minutes'),
                         ft.dropdown.Option('10 Minutes'),
                         ft.dropdown.Option('15 Minutes'),
+                        ft.dropdown.Option('20 Minutes'),
                         ft.dropdown.Option('30 Minutes'),
                     ])
         self.parent = parent
         parent.todos.append(self)
         self.alert_dialogue.page = page
+
+    def load_from_Todo(self,todo: Todo):
+        self.name.value = todo.name
+        self.time.value = todo.time
+    def to_Todo(self) -> Todo:
+        if self.time.value is None:
+            self.alert_dialogue.open_dialog()
+            raise ValueError('No value is given for time.')
+        return Todo(self.name.value,self.time.value)
 
     def remove_todo(self,event):
         assert self.id>1
@@ -44,11 +55,6 @@ class Todo:
 
 
     def getValues(self):
-        if self.time.value is None:
-            self.alert_dialogue.open_dialog()
-            return
-
-
         return dict(
             todo_name = self.name.value,
             time = self.time.value
@@ -66,17 +72,20 @@ class Todo:
         ),
             padding=10,
             border_radius=10,
-            border=ft.border.all(1, colors.BLACK26)
+            border=ft.border.all(1, ft.colors.BLACK26)
 
         )
 
+
 class TaskView:
     alert_dialogue = Dialogue('Please enter task time')
+    alert_dialogue2 = Dialogue('Please add Todos')
     def __init__(self, page:ft.Page):
         self.alert_dialogue.page = page
+        self.alert_dialogue2.page = page
         self.page = page
         self.title = ft.Markdown('## Create a New Task')
-        self.name = ft.TextField(label='Todo Name', value='My Task')
+        self.name = ft.TextField(label='Task Name', value='My Task')
 
 
         self.main_task = ft.Container(
@@ -110,7 +119,7 @@ class TaskView:
 
     def todo_view(self):
         index = len(self.view.controls)-1
-        todo = Todo(index, parent_controls=self.view.controls, page=self.page, parent=self)
+        todo = TodoView(index, parent_controls=self.view.controls, page=self.page, parent=self)
         return todo.view()
 
 
@@ -121,35 +130,22 @@ class TaskView:
         self.page.update()
 
     def getInfo(self,event):
+        if len(self.todos) == 0:
+            self.alert_dialogue2.open_dialog()
+            return
 
-        sub_cards = [ft.Markdown(f'### {self.name.value}')]
-        time = ''
-        for todo in self.todos:
-            info = todo.getValues()
-            task_name = info['todo_name']
-            time = info['time']
-            todo_card = TaskCard(task_name,time,self.page)
-            sub_cards.append(todo_card)
+        try:
+            task = Task(self.name.value, list(map(lambda x: x.to_Todo(), self.todos)), self.page)
+        except:
 
-
-
-        task_card = TaskCard(self.name.value,time,
-                             content= ft.Column(controls=sub_cards,horizontal_alignment='center'),
-                             page= self.page
-                             )
+            return
 
         ## page
-        self.page.body.controls[2].content.controls.append(task_card)
-        while len(self.view.controls) > 3:
-            self.view.controls.pop(2)
-        self.page.update()
-        self.todos.clear()
+        current_view_update(self.page,task,False, self )
 
-        ## thread issues
-        for i in range(1,len(sub_cards)):
-            thr = sub_cards[i]
-            thr.start()
-            thr.join()
+
+
+
 
 
     def getValues(self):
