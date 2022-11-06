@@ -40,20 +40,14 @@ class Task(IO):
     def __init__(self, title: str, todos: list, page):
         self.title = ft.Markdown(f'### {title}')
         self.todos = todos
+        self.subtask_cards = []
         self.page = page
-
-
-        self.subtask_cards = self.create_sub_tasks_cards()
-
-    def create_sub_tasks_cards(self):
-        ret = []
         for todo in self.todos:
             info = todo.getValues()
             task_name = info['todo_name']
             time = info['time']
-            todo_card = TaskCard(task_name,time,self.page)
-            ret.append(todo_card)
-        return ret
+            todo_card = TaskCard(task_name,time,page)
+            self.subtask_cards.append(todo_card)
 
     def to_view(self, only_title = False, store_icon = True) -> TaskCard:
         if only_title:
@@ -87,9 +81,6 @@ class Task(IO):
         else:
             print('already starred')
 
-    @classmethod
-    def copy(cls, obj):
-        return cls(obj.title.value[4:],obj.todos,obj.page)
 
     def to_json(self, file_path:str = None):
         if file_path is None:
@@ -148,15 +139,11 @@ def starred_view_update(page, tasks):
     col3 = page.body.controls[3]
 
 
-
-
     for task in tasks:
-        def starred_play(event):
-            current_view_update(page,Task.copy(task),store_icon=False)
         col3.content.controls.append(
             ft.Card(content=ft.Row(controls=[
             task.title,
-            ft.IconButton(icon=icons.PLAY_ARROW,on_click=starred_play),
+            ft.IconButton(icon=icons.PLAY_ARROW,on_click=functools.partial(current_view_update,page,task,store_icon=False)),
             ft.IconButton(icon=icons.REMOVE,on_click=functools.partial(delete_favorite_and_update_view,page=page,file_name=f'{task.title.value[4:]}.json',starred_set=task.STARRED))
         ])))
     page.update()
