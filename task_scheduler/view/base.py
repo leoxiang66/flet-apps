@@ -12,6 +12,13 @@ class BaseView(BaseModel):
 
     def add_widget(self, widget: ft.Control, widget_name: str, controllers: dict = None, add_to_page = True):
         self.widgets[widget_name] = (widget, controllers)
+
+        ##### experimental #####
+        if controllers is not None:
+            for key, func in controllers.items():
+                widget.__setattr__(key, func)
+        ########################
+
         if add_to_page:
             self.page.controls.append(widget)
 

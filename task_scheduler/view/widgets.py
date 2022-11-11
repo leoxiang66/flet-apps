@@ -1,6 +1,6 @@
 import flet as ft
 from .base import BaseView
-
+from ..controller import BaseController
 
 class BaseWidget(BaseView):
     def __init__(self, page: ft.Page) -> None:
@@ -19,9 +19,8 @@ class TaskWidget(BaseWidget):
         super().__init__(page)
         self.add_widget(ft.Markdown('## Create a new task'),widget_name='title')
         self.add_widget(ft.TextField(label='Task Name', value='My Task'),widget_name='task_name_input')
-        self.add_widget(ft.TextButton('Submit'),widget_name='submit_button',controllers=dict(
-            on_click = None # todo
-        ))
+        self.add_widget(ft.TextButton('Submit'),widget_name='submit_button',controllers= BaseController.get_controllers('test')
+                        )
         self.add_widget(ft.TextButton('Add a todo'),widget_name='add_todo_button', controllers=dict(
             on_click = None # todo
         ))
