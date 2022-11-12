@@ -13,3 +13,11 @@ class IO:
         with open(file_path, 'r', encoding='UTF-8') as f:
             load_dict = json.load(f)
         return load_dict
+
+def convert_time(time:str):
+    if 'Minute' in time:
+        idx = time.index(' ')
+        time_ = 60 * int(time[:idx])
+    else:
+        time_ = 30
+    return time_

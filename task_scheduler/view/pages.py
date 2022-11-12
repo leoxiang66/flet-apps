@@ -21,8 +21,14 @@ class HomePage():
             widget_name = f'{self.pattern[6:]}_{container}'
             return self.view.get_widget(widget_name)
 
-    def add_widget(self,widget: ft.Control, container: Union[int,str]):
+    def append_widget(self, widget: ft.Control, container: Union[int, str]):
         self.get_container(container).controls.append(widget)
+
+    def insert_widget(self,widget:ft.Control,container: Union[int, str], idx: int):
+        self.get_container(container).controls.insert(idx,widget)
+
+    def remove_widget(self, container: Union[int,str],idx: int = -1):
+        self.get_container(container).controls.pop(idx)
 
     def refresh(self):
         self.view.page.update()

@@ -1,11 +1,29 @@
 from .base import BaseModel
 from typing import Optional,Union,List
+from ..utils import convert_time
+import asyncio
+
+
 
 class Todo(BaseModel):
     def __init__(self, todo_name:str,time: str):
         super().__init__()
         self.todo_name = todo_name
         self.time = time
+        self.callback = None
+
+    async def run(self):
+        time = convert_time(self.time)
+        if self.callback is not None:
+            self.callback(time)
+
+        for i in range(time):
+            await asyncio.sleep(1)
+            if self.callback is not None:
+                self.callback(time-i-1)
+
+
+
 
 
 class TodoList(BaseModel):
@@ -58,3 +76,10 @@ class Task(BaseModel):
 
     def getTodos(self) -> List[Todo]:
         return self.todolist.__list__
+
+
+    def __await__(self):
+        for todo in self.todolist:
+            yield from todo.run().__await__()
+        return 'done'
+

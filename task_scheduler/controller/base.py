@@ -14,6 +14,7 @@ class BaseController:
             temp[i] = new_func
 
         cls.CALLBACK[widget_name] = temp
+        return temp
     @classmethod
     def get_controllers(cls,widget_name:str) -> Union[dict,None]:
         if widget_name in cls.CALLBACK:

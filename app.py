@@ -2,7 +2,7 @@ if __name__ == '__main__':
     from task_scheduler.view.pages  import HomePage
     from task_scheduler.view.widgets import *
     import flet as ft
-    from pprint import pprint
+
 
     def main(page:ft.Page):
         page.horizontal_alignment = 'center'
@@ -11,18 +11,19 @@ if __name__ == '__main__':
         page.scroll = 'adaptive'
         page.window_width = 1000
         page.window_height = 500
-
-        homepage = HomePage(page,3)
+        homepage = HomePage(page, 3)
         homepage.refresh()
 
-        for i in range(3):
-            homepage.add_widget(
-                widget=ft.Markdown(f'# Column {i+1}'),
-                container=i
-            )
+        page.homepage = homepage # very important
+
+
+
+        homepage.append_widget(ft.Markdown('# In Progressing'),1)
+        homepage.append_widget(ft.Markdown('# Starred Tasks'), container=2)
 
         a = TaskWidget(page)
-        homepage.add_widget(a.to_flet(),0)
+        homepage.task_widget = a
+        homepage.append_widget(a.to_flet(), 0)
 
         homepage.refresh()
 
