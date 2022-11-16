@@ -9,6 +9,9 @@ from os.path import join
 
 class TaskController(BaseController):
     CACHE_PATH = './.cache/'
+    if not os.path.isdir(CACHE_PATH):
+        os.mkdir(CACHE_PATH)
+
     @classmethod
     def update_task_widget_in_page(cls,page):
         page.homepage.remove_widget(0, -1)
@@ -105,6 +108,8 @@ class TaskController(BaseController):
 
     @classmethod
     def on_startup(cls,page, task_type, taskpreview_type):
+        if not os.path.isdir(cls.CACHE_PATH):
+            os.mkdir(cls.CACHE_PATH)
         files = [f for f in listdir(cls.CACHE_PATH) if f.endswith('.json')]
         for file in files:
             task= task_type.from_json(join(cls.CACHE_PATH,file))
