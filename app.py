@@ -12,14 +12,8 @@ if __name__ == '__main__':
         page.window_width = 1000
         page.window_height = 500
         homepage = HomePage(page, 3)
-        homepage.refresh()
-
-        page.homepage = homepage # very important
 
 
-
-        homepage.append_widget(ft.Markdown('# In Progressing'),1)
-        homepage.append_widget(ft.Markdown('# Starred Tasks'), container=2)
 
         a = TaskWidget(page)
         homepage.task_widget = a
@@ -32,6 +26,6 @@ if __name__ == '__main__':
 
 
     ft.app(target=main,
-           view=ft.WEB_BROWSER
+           # view=ft.WEB_BROWSER
            )
 

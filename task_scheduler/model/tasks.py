@@ -22,8 +22,11 @@ class Todo(BaseModel):
             if self.callback is not None:
                 self.callback(time-i-1)
 
-
-
+    def to_dict(self) -> dict:
+        return dict(
+            todo_name = self.todo_name,
+            time = self.time
+        )
 
 
 class TodoList(BaseModel):
@@ -82,4 +85,22 @@ class Task(BaseModel):
         for todo in self.todolist:
             yield from todo.run().__await__()
         return 'done'
+
+    def to_dict(self) -> dict:
+        return dict(
+            name = self.name,
+            todos = [x.to_dict() for x in self.getTodos()]
+        )
+
+    @classmethod
+    def from_json(cls, path: str):
+        dict_obj = cls.json_to_dict(path)
+        ret = cls(name=dict_obj['name'])
+        for i in dict_obj['todos']:
+            ret.add_todo(i['todo_name'], i['time'])
+        return ret
+
+
+
+
 
