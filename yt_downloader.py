@@ -21,10 +21,6 @@ from pytube import Playlist
 
 
 def main(page: Page):
-    # Open directory dialog
-    def get_directory_result(e: FilePickerResultEvent):
-        directory_path.value = e.path if e.path else "Cancelled!"
-        directory_path.update()
 
     def button_clicked(e, ):
         url = url_input.value
@@ -45,21 +41,39 @@ def main(page: Page):
             download = lambda id, x: x.streams.filter(progressive=True, file_extension='mp4').order_by(
                 'resolution').desc().first().download(
                 output_path=output_path,
-                # filename=str(Path(output_path).joinpath(Path(f'''{id + 1}_{x.title}.mp4''')))
+                filename= f'{id+1}_{x.title}.mp4'
             )
+                
+            id  = 0
+            while id  < number_videos:
+                try:
+                    print('start downloading...')
+                    x = playlist.videos[id]
+                    download(id, x)
+                    pb.value = (id+1) / number_videos
+                    pb.visible = True
+                    page.update()
+                    print(f'downloaded: {x.title}.mp4')
+                    
+                    id += 1
+                
+                except Exception as e:
+                    print(e)
+                    
+                    
 
-            for id, x in enumerate(playlist.videos):
-                print('start downloading...')
-                download(id, x)
-                pb.value = (id+1) / number_videos
-                pb.visible = True
-                page.update()
+            # for id, x in enumerate(playlist.videos):
+            #     print('start downloading...')
+            #     download(id, x)
+            #     pb.value = (id+1) / number_videos
+            #     pb.visible = True
+            #     page.update()
 
-                print(f'downloaded: {x.title}.mp4')
+            #     print(f'downloaded: {x.title}.mp4')
 
             pb.visible = False
 
-    get_directory_dialog = FilePicker(on_result=get_directory_result)
+    get_directory_dialog = FilePicker()
     directory_path = Text()
     page.overlay.append(get_directory_dialog)
     page.update()
