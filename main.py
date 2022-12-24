@@ -9,15 +9,7 @@ from flet import (
     icons,
 )
 from pathlib import Path
-
-
-
 from pytube import Playlist
-
-
-
-
-
 
 
 def main(page: Page):
@@ -59,17 +51,6 @@ def main(page: Page):
                 
                 except Exception as e:
                     print(e)
-                    
-                    
-
-            # for id, x in enumerate(playlist.videos):
-            #     print('start downloading...')
-            #     download(id, x)
-            #     pb.value = (id+1) / number_videos
-            #     pb.visible = True
-            #     page.update()
-
-            #     print(f'downloaded: {x.title}.mp4')
 
             pb.visible = False
 
@@ -99,30 +80,12 @@ def main(page: Page):
     
     
 
-                        
-                    
-                
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    # hide all dialogs in overlay
-    # page.overlay.extend([get_directory_dialog])
 
 
 
 
 if __name__ == '__main__':
+    print('program start...')
     flet.app(target=main,
-             # view=flet.WEB_BROWSER
+             view=flet.WEB_BROWSER
              )
