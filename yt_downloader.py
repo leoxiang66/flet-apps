@@ -8,27 +8,59 @@ from flet import (
     Text,
     icons,
 )
+from pathlib import Path
+
+
 
 from pytube import Playlist
-from pytube import streams
-streams.Stream.do
+
+
+
+
 
 
 
 def main(page: Page):
     directory_path = Text()
+    file_picker = flet.FilePicker()
+    page.overlay.append(file_picker)
+    page.update()
+    
+    pb = flet.ProgressBar(width=page.width,visible= False)
+    
+    
     def button_clicked(e,):
         url = url_input.value
-        playlist = Playlist(url)
-        output_path = directory_path.value
-        print('Number of videos in playlist: %s' % len(playlist.video_urls))
+        if url is not None and ('https' in url or 'http' in url):
+            playlist = Playlist(url)
+            number_videos = len(playlist.video_urls)
+            print('Number of videos in playlist: %s' % number_videos)
+        
+            output_path = directory_path.value
+            
+            if output_path is None:
+                output_path = './downloads'
+                p = Path(output_path)
+                p.mkdir(parents=True, exist_ok=True)
+                directory_path.value = str(p.absolute())
+                page.update()
+                        
+                    
+                
 
-        download = lambda id,x: x.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc().first().download(
-            output_path=output_path,
-            filename= f'{id+1}_{x.title}'
-        )
-        for id,x in enumerate(playlist.videos):
-            download(id,x)
+
+            download = lambda id,x: x.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc().first().download(
+                output_path=output_path,
+                filename= f'{id+1}_{x.title}.mp4'
+            )
+            
+            for id,x in enumerate(playlist.videos):
+                download(id,x)
+                pb.value = id / number_videos
+                pb.visible = True
+                page.update()
+            
+            pb.visible = False
 
 
     page.add(flet.Markdown('# Youtube Playlist Downloader'))
@@ -39,34 +71,16 @@ def main(page: Page):
                 ElevatedButton(
                     "Choose Output Directory",
                     icon=icons.FOLDER_OPEN,
-                    on_click=lambda _: get_directory_dialog.get_directory_path(),
+                    on_click=lambda _: file_picker.get_directory_path(),
                     disabled=page.web,
                 ),
                 directory_path,
             ]
-        ) ,btn)
+        ) ,btn,
+             pb
+             )
 
 
-
-
-
-    # Pick files dialog
-    # def pick_files_result(e: FilePickerResultEvent):
-    #     selected_files.value = (
-    #         ", ".join(map(lambda f: f.name, e.files)) if e.files else "Cancelled!"
-    #     )
-    #     selected_files.update()
-    #
-    # pick_files_dialog = FilePicker(on_result=pick_files_result)
-    # selected_files = Text()
-    #
-    # # Save file dialog
-    # def save_file_result(e: FilePickerResultEvent):
-    #     save_file_path.value = e.path if e.path else "Cancelled!"
-    #     save_file_path.update()
-    #
-    # save_file_dialog = FilePicker(on_result=save_file_result)
-    # save_file_path = Text()
 
     # Open directory dialog
     def get_directory_result(e: FilePickerResultEvent):
@@ -77,7 +91,7 @@ def main(page: Page):
 
 
     # hide all dialogs in overlay
-    page.overlay.extend([get_directory_dialog])
+    # page.overlay.extend([get_directory_dialog])
 
 
 
