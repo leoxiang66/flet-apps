@@ -51,7 +51,7 @@ def main(page: Page):
             for id, x in enumerate(playlist.videos):
                 print('start downloading...')
                 download(id, x)
-                pb.value = id / number_videos
+                pb.value = (id+1) / number_videos
                 pb.visible = True
                 page.update()
 
