@@ -2,9 +2,11 @@ import flet as ft
 from ._msg import Message,ChatMessage
 from ._response import reply
 
+
 def main(page: ft.Page):
     page.horizontal_alignment = "stretch"
-    page.title = "Flet Chat"
+    page.title = "广东话聊天机器人"
+
 
     def join_chat_click(e):
         if not join_user_name.value:
@@ -79,6 +81,8 @@ def main(page: ft.Page):
             border_radius=5,
             padding=10,
             expand=True,
+            width=1300
+
         ),
         ft.Row(
             [
@@ -93,4 +97,4 @@ def main(page: ft.Page):
     )
 
 def run():
-    ft.app(port=8550, target=main, view=ft.WEB_BROWSER)
+    ft.app(port=8550, target=main)

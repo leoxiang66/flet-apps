@@ -3,8 +3,10 @@ import flet as ft
 class Message():
     def __init__(self, user_name: str, text: str, message_type: str):
         self.user_name = user_name
+
         self.text = text
         self.message_type = message_type
+        print(self.text)
 
 class ChatMessage(ft.Row):
     def __init__(self, message: Message):
@@ -19,10 +21,11 @@ class ChatMessage(ft.Row):
                 ft.Column(
                     [
                         ft.Text(message.user_name, weight="bold"),
-                        ft.Text(message.text, selectable=True),
+                        ft.Markdown(message.text, selectable=True,extension_set=ft.MarkdownExtensionSet.GITHUB_WEB),
                     ],
                     tight=True,
                     spacing=5,
+                    expand=True,  # expand here
                 ),
             ]
 

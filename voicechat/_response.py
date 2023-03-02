@@ -1,13 +1,28 @@
 import openai
-openai.api_key='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'
+import time
 
+openai.api_key='hi'
 
 def reply(msg:str):
-    completion = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": f"{msg}, 請用粵語答我."}]
-    )
-    response = completion['choices'][0]['message']['content'].strip()
-    print(response)
+    def query_openai():
+        try:
+            completion = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[{"role": "user", "content": f'''{msg}
+要求：
+1.用粵語回答
+2.回覆中不要介紹你自己
+3.回覆中不要重複我的問題
+'''}]
+            )
+            return completion
+        except:
+            time.sleep(1)
+            query_openai()
+
+    completion = query_openai()
+    response = completion['choices'][0]['message']['content']
+    # response = list(response)
+    # response = ' '.join(response)
     return response
 
