@@ -21,7 +21,7 @@ class ChatMessage(ft.Row):
                 ft.Column(
                     [
                         ft.Text(message.user_name, weight="bold"),
-                        ft.Markdown(message.text, selectable=True,extension_set=ft.MarkdownExtensionSet.GITHUB_WEB),
+                        ft.Text(message.text, selectable=True,size=18),
                     ],
                     tight=True,
                     spacing=5,

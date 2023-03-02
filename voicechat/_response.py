@@ -1,7 +1,7 @@
 import openai
 import time
 
-openai.api_key='hi'
+openai.api_key=''
 
 def reply(msg:str):
     def query_openai():
@@ -21,8 +21,6 @@ def reply(msg:str):
             query_openai()
 
     completion = query_openai()
-    response = completion['choices'][0]['message']['content']
-    # response = list(response)
-    # response = ' '.join(response)
+    response = completion['choices'][0]['message']['content'].strip()
     return response
 
