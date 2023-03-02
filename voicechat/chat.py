@@ -7,15 +7,23 @@ def main(page: ft.Page):
     page.horizontal_alignment = "stretch"
     page.title = "广东话聊天机器人"
 
+    # Chat messages
+    chat = ft.ListView(
+        expand=True,
+        spacing=10,
+        auto_scroll=True,
+    )
+
 
     def join_chat_click(e):
-        if not join_user_name.value:
+        if join_user_name.value is None or join_user_name=='':
             join_user_name.error_text = "Name cannot be blank!"
             join_user_name.update()
         else:
             page.session.set("user_name", join_user_name.value)
             page.dialog.open = False
             new_message.prefix = ft.Text(f"{join_user_name.value}: ")
+            on_message(Message('ChatBot', '你好，我係廣東話傾偈機械人。 有咩可以幫到你？', message_type='chat_message'))
             page.update()
 
     def send_message_click(e):
@@ -37,7 +45,6 @@ def main(page: ft.Page):
         chat.controls.append(m)
         page.update()
 
-    # page.pubsub.subscribe(on_message)
 
     # A dialog asking for a user display name
     join_user_name = ft.TextField(
@@ -51,15 +58,10 @@ def main(page: ft.Page):
         title=ft.Text("Welcome!"),
         content=ft.Column([join_user_name], width=300, height=70, tight=True),
         actions=[ft.ElevatedButton(text="Join chat", on_click=join_chat_click)],
-        actions_alignment="end",
+        actions_alignment=ft.MainAxisAlignment.END,
     )
 
-    # Chat messages
-    chat = ft.ListView(
-        expand=True,
-        spacing=10,
-        auto_scroll=True,
-    )
+
 
     # A new message entry form
     new_message = ft.TextField(
@@ -81,7 +83,7 @@ def main(page: ft.Page):
             border_radius=5,
             padding=10,
             expand=True,
-            width=1300
+            # width=1300
 
         ),
         ft.Row(
