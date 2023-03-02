@@ -1,5 +1,6 @@
 import flet as ft
 from ._msg import Message,ChatMessage
+from ._response import reply
 
 def main(page: ft.Page):
     page.horizontal_alignment = "stretch"
@@ -13,13 +14,14 @@ def main(page: ft.Page):
             page.session.set("user_name", join_user_name.value)
             page.dialog.open = False
             new_message.prefix = ft.Text(f"{join_user_name.value}: ")
-            # page.pubsub.send_all(Message(user_name=join_user_name.value, text=f"{join_user_name.value} has joined the chat.", message_type="login_message"))
             page.update()
 
     def send_message_click(e):
-        if new_message.value != "":
-            # page.pubsub.send_all(Message(page.session.get("user_name"), new_message.value, message_type="chat_message"))
-            on_message(Message(page.session.get("user_name"), new_message.value, message_type="chat_message"))
+        new_msg = new_message.value
+        if new_msg != "":
+            on_message(Message(page.session.get("user_name"), new_msg, message_type="chat_message"))
+            response = reply(new_msg)
+            on_message(Message('ChatBot', response, message_type='chat_message'))
             new_message.value = ""
             new_message.focus()
             page.update()
